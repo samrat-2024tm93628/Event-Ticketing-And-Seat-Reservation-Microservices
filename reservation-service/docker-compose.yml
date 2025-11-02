@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: reservationdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d reservationdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  reservation:
+    build: .
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/reservationdb
+      PORT: 3001
+      NODE_ENV: development
+      CATALOG_URL: https://host.docker.internal:4001
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "3001:3001"
+
+volumes:
+  postgres_data:
