@@ -1,0 +1,33 @@
+{
+  "name": "order-service",
+  "version": "1.0.0",
+  "description": "Order and Ticketing Microservice",
+  "main": "src/app.js",
+  "type": "commonjs",
+  "engines": {
+    "node": "18"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [
+    "order",
+    "ticketing",
+    "microservice"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.5.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "joi": "^18.0.1",
+    "mongoose": "^7.5.0",
+    "uuid": "^9.0.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
