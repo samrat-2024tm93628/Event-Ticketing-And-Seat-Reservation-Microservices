@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: payments_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./services/payment-service/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  payment-service:
+    build: ./services/payment-service
+    container_name: payment-service
+    env_file:
+      - ./services/payment-service/.env
+    ports:
+      - "5004:5004"
+    depends_on:
+      - postgres
+    restart: on-failure
+
+  payment-adapter:
+    build: ./services/payment-adapter
+    container_name: payment-adapter
+    env_file:
+      - ./services/payment-adapter/.env
+    ports:
+      - "6000:6000"
+    depends_on:
+      - payment-service
+    restart: on-failure
+
+volumes:
+  pgdata:
