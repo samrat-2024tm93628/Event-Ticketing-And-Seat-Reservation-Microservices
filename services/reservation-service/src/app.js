@@ -28,7 +28,7 @@ app.get('/metrics', async (req, res) => {
   res.end(await promClient.register.metrics());
 });
 
-app.use('/', seatsRouter);
+app.use('/v1/seats', seatsRouter);
 
 const port = process.env.PORT || 3001;
 

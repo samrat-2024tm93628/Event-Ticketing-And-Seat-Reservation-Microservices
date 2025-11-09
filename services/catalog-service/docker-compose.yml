@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  catalog-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: catalog-service
+    ports:
+      - "3005:3005"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/catalog_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Root@12345
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - catalog-network
+
+networks:
+  catalog-network:
+    driver: bridge

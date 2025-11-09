@@ -11,7 +11,7 @@ const catalogClient = axios.create({
 const checkEventExists = async (eventId) => {
   try {
     logger.info(`Checking if event exists: ${eventId}`);
-    const response = await catalogClient.get(`/${eventId}`);
+    const response = await catalogClient.get(`/events/${eventId}`);
     logger.info(`Event verified: ${eventId}`);
     return true;
   } catch (error) {

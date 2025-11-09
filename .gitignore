@@ -1,0 +1,34 @@
+# Node.js dependencies (all nested directories)
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Maven build output (all nested directories)
+**/target/
+
+# Environment variables
+**/.env
+**/.env.local
+**/.env.*.local
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.cache

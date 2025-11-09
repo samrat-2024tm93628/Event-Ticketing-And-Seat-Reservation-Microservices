@@ -12,7 +12,7 @@ import pool from "./src/db/dbClient.js";
 
 
 const app = express();
-const PORT = process.env.PORT || 5004;
+const PORT = process.env.PORT || 3003;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -76,9 +76,13 @@ app.post(
       }
 
       // Simulate payment gateway
-      const success = Math.random() > 0.2; // 80% success rate
+      // PAYMENT_FAILURE_RATE: 0.0 = always success, 1.0 = always fail, 0.2 = 20% fail
+      const failureRate = parseFloat(process.env.PAYMENT_FAILURE_RATE || '0.2');
+      const success = Math.random() > failureRate;
       const status = success ? "SUCCESS" : "FAILED";
       const reference = "TXN-" + uuidv4().slice(0, 8);
+      
+      console.log(`💳 Payment simulation for Order ${order_id}: ${status} (failure rate: ${failureRate * 100}%)`);
 
       const result = await pool.query(
         `INSERT INTO payments (order_id, amount, method, status, reference)
@@ -113,6 +117,22 @@ app.get("/v1/payments/:id", requireAuthHS, async (req, res) => {
     const result = await pool.query("SELECT * FROM payments WHERE payment_id=$1", [id]);
     if (result.rowCount === 0) return res.status(404).json({ error: "Payment not found" });
     res.status(200).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =========================
+// GET /v1/payments/order/:orderId
+// =========================
+app.get("/v1/payments/order/:orderId", requireAuthHS, async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const result = await pool.query(
+      "SELECT * FROM payments WHERE order_id=$1 ORDER BY created_at DESC",
+      [orderId]
+    );
+    res.status(200).json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
