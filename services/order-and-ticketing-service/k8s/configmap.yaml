@@ -5,10 +5,25 @@ metadata:
   name: order-service-config
   namespace: default
 data:
+  # Application Configuration
   PORT: "3001"
   NODE_ENV: "production"
-  RESERVATION_SERVICE_URL: "http://reservation-service:3002"
-  PAYMENT_SERVICE_URL: "http://payment-service:3003"
-  IDEMPOTENCY_TTL_SECONDS: "3600"
   LOG_LEVEL: "info"
+  
+  # Idempotency
+  IDEMPOTENCY_TTL_SECONDS: "3600"
+  
+  # JWT Configuration for Service-to-Service Authentication
+  JWT_SECRET: "dev_secret_key"
+  JWT_ISSUER: "https://auth.local/"
+  JWT_AUDIENCE: "payment-service"
+  SERVICE_USER_ID: "order-service"
+  SERVICE_EMAIL: "order-service@internal"
+  
+  # Dependent Microservices
+  # These are internal Kubernetes service names for inter-service communication
+  RESERVATION_SERVICE_URL: "http://reservation-service:3002/v1/seats"
+  PAYMENT_SERVICE_URL: "http://payment-service:3003"
+  USER_SERVICE_URL: "http://user-service:3004/v1/users"
+  CATALOG_SERVICE_URL: "http://catalog-service:3005"
 

@@ -11,6 +11,13 @@ const config = {
     userServiceUrl: process.env.USER_SERVICE_URL || 'http://localhost:3004/v1/users',
     catalogServiceUrl: process.env.CATALOG_SERVICE_URL || 'http://localhost:3005/v1/events'
   },
+  jwt: {
+    secret: process.env.JWT_SECRET || 'dev_secret_key',
+    issuer: process.env.JWT_ISSUER || 'https://auth.local/',
+    audience: process.env.JWT_AUDIENCE || 'payment-service',
+    serviceUserId: process.env.SERVICE_USER_ID || 'order-service',
+    serviceEmail: process.env.SERVICE_EMAIL || 'order-service@internal'
+  },
   idempotency: {
     ttlSeconds: parseInt(process.env.IDEMPOTENCY_TTL_SECONDS || '3600', 10)
   },

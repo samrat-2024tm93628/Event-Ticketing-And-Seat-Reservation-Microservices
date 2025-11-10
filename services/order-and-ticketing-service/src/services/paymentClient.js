@@ -1,4 +1,5 @@
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 const config = require('../config');
 const logger = require('../utils/logger');
 
@@ -9,6 +10,25 @@ const paymentClient = axios.create({
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 500;
+
+// Generate a service-to-service JWT token for payment service authentication
+const generateServiceToken = () => {
+  const token = jwt.sign(
+    {
+      sub: config.jwt.serviceUserId,
+      email: config.jwt.serviceEmail,
+      roles: ['payments:write']
+    },
+    config.jwt.secret,
+    {
+      algorithm: 'HS256',
+      issuer: config.jwt.issuer,
+      audience: config.jwt.audience,
+      expiresIn: '1h'
+    }
+  );
+  return token;
+};
 
 const retry = async (fn, retryCount = 0) => {
   try {
@@ -27,13 +47,16 @@ const retry = async (fn, retryCount = 0) => {
 
 const charge = async ({ orderId, amount, method, idempotencyKey }) => {
   try {
+    const token = generateServiceToken();
     const response = await retry(async () => {
-      return await paymentClient.post('/charge', {
-        orderId,
+      return await paymentClient.post('/v1/payments/charge', {
+        order_id: orderId,
         amount,
-        method
+        method,
+        idempotency_key: idempotencyKey
       }, {
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Idempotency-Key': idempotencyKey
         }
       });
@@ -41,7 +64,7 @@ const charge = async ({ orderId, amount, method, idempotencyKey }) => {
     
     return {
       success: true,
-      id: response.data.paymentId || response.data.id,
+      id: response.data.payment_id || response.data.id,
       raw: response.data
     };
   } catch (error) {
@@ -56,15 +79,20 @@ const charge = async ({ orderId, amount, method, idempotencyKey }) => {
 
 const refund = async ({ paymentId }) => {
   try {
+    const token = generateServiceToken();
     const response = await retry(async () => {
-      return await paymentClient.post('/refund', {
-        paymentId
+      return await paymentClient.post('/v1/payments/refund', {
+        payment_id: paymentId
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
     });
     
     return {
       success: true,
-      id: response.data.refundId || response.data.id,
+      id: response.data.payment_id || response.data.id,
       raw: response.data
     };
   } catch (error) {

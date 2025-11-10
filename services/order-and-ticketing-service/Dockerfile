@@ -10,7 +10,11 @@ RUN npm install --production
 
 # Copy application code
 COPY src ./src
-COPY .env.example ./.env.example
+COPY scripts ./scripts
+COPY data ./data
+
+# Copy .env file (will be overridden by Kubernetes env vars)
+COPY .env ./.env
 
 # Expose port
 EXPOSE 3001

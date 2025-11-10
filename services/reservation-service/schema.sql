@@ -3,8 +3,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Current seat availability view for this service (snapshot of catalog seats)
 CREATE TABLE seat_availability (
-  seat_id UUID PRIMARY KEY,
-  event_id UUID NOT NULL,
+  seat_id varchar PRIMARY KEY,
+  event_id varchar NOT NULL,
   section varchar,
   row varchar,
   seat_number varchar,
@@ -17,10 +17,10 @@ CREATE TABLE seat_availability (
 CREATE TABLE seat_holds (
   hold_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   idempotency_key varchar NULL,
-  order_id UUID NULL,
-  event_id UUID NOT NULL,
-  seat_id UUID NOT NULL,
-  user_id UUID NULL,
+  order_id varchar NULL,
+  event_id varchar NOT NULL,
+  seat_id varchar NOT NULL,
+  user_id varchar NULL,
   created_at timestamptz DEFAULT now(),
   expires_at timestamptz NOT NULL,
   status varchar NOT NULL DEFAULT 'HELD', -- HELD | RELEASED | ALLOCATED
@@ -33,8 +33,8 @@ CREATE INDEX idx_seat_holds_expires_at ON seat_holds(expires_at);
 -- Allocations table (final)
 CREATE TABLE seat_allocations (
   allocation_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  order_id UUID NOT NULL,
-  event_id UUID NOT NULL,
+  order_id varchar NOT NULL,
+  event_id varchar NOT NULL,
   seats jsonb NOT NULL, -- snapshot: [{seat_id, section, row, seat_number, price}]
   created_at timestamptz DEFAULT now()
 );

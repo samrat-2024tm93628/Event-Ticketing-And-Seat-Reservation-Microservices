@@ -241,4 +241,31 @@ router.post('/release', async (req, res) => {
   }
 });
 
+/**
+ * POST /v1/seats/seat-prices
+ * Body: { eventId, seats: [seat_id] }
+ * Returns the price for each seat (authoritative pricing from reservation service)
+ */
+router.post('/seat-prices', async (req, res) => {
+  const { eventId, seats } = req.body;
+  if (!eventId || !Array.isArray(seats) || seats.length === 0) {
+    return res.status(400).json({ error: 'eventId and seats[] required' });
+  }
+
+  try {
+    const prices = [];
+    for (const seatId of seats) {
+      const result = await db.query('SELECT seat_id, price FROM seat_availability WHERE seat_id = $1 AND event_id = $2', [seatId, eventId]);
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: `Seat ${seatId} not found for event ${eventId}` });
+      }
+      prices.push(result.rows[0].price);
+    }
+    return res.json({ prices });
+  } catch (err) {
+    console.error('seat-prices error', err);
+    return res.status(500).json({ error: 'failed to fetch seat prices' });
+  }
+});
+
 module.exports = router;
