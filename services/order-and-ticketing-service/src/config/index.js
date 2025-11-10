@@ -9,7 +9,7 @@ const config = {
     reservationServiceUrl: process.env.RESERVATION_SERVICE_URL || 'http://localhost:3002/v1/seats',
     paymentServiceUrl: process.env.PAYMENT_SERVICE_URL || 'http://localhost:3003',
     userServiceUrl: process.env.USER_SERVICE_URL || 'http://localhost:3004/v1/users',
-    catalogServiceUrl: process.env.CATALOG_SERVICE_URL || 'http://localhost:3005/v1/events'
+    catalogServiceUrl: process.env.CATALOG_SERVICE_URL || 'http://localhost:3005'
   },
   jwt: {
     secret: process.env.JWT_SECRET || 'dev_secret_key',
