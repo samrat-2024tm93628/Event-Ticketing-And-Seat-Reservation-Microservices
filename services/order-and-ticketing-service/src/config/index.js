@@ -2,9 +2,10 @@ require('dotenv').config();
 
 const config = {
   mongo: {
-    uri: process.env.MONGO_URI || 'mongodb://localhost:27017/order-service'
+    uri: process.env.MONGO_URI || 'mongodb+srv://samrat:pNLJpqkibPfYyzwM@cluster0.0b5kvcm.mongodb.net/order?appName=Cluster0&retryWrites=true&w=majority'
   },
   port: process.env.PORT || 3001,
+  logLevel: process.env.LOG_LEVEL || 'info',
   services: {
     reservationServiceUrl: process.env.RESERVATION_SERVICE_URL || 'http://localhost:3002/v1/seats',
     paymentServiceUrl: process.env.PAYMENT_SERVICE_URL || 'http://localhost:3003',
